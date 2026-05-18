@@ -1,0 +1,125 @@
+#include <gtest/gtest.h>
+#include <string>
+#include <cmath>
+
+
+
+// ============================================================
+// Q1 – ScoreTracker
+// ============================================================
+
+TEST(Q1_ScoreTracker, DefaultStartsAtZero) {
+    ScoreTracker t;
+    EXPECT_EQ(t.getScore(), 0);
+    EXPECT_EQ(t.getHighScore(), 0);
+}
+
+TEST(Q1_ScoreTracker, OverloadedConstructorSetsStart) {
+    ScoreTracker t(50, 100);
+    EXPECT_EQ(t.getScore(), 50);
+    EXPECT_EQ(t.getHighScore(), 100);
+}
+
+TEST(Q1_ScoreTracker, AddPointsUpdatesHighScore) {
+    ScoreTracker t(80, 90);
+    t.addPoints(20);          // score = 100, new high score
+    EXPECT_EQ(t.getScore(), 100);
+    EXPECT_EQ(t.getHighScore(), 100);
+}
+
+
+// ============================================================
+// Q2 – CoffeeOrder  
+// ============================================================
+
+TEST(Q2_CoffeeOrder, DefaultReceipt) {
+    CoffeeOrder c;
+    EXPECT_EQ(c.getReceipt(), "Espresso x1 | No milk | Total: Rs.150");
+}
+
+TEST(Q2_CoffeeOrder, CustomOrderWithMilk) {
+    CoffeeOrder c("Latte", 2, true, 250);
+    EXPECT_EQ(c.getReceipt(), "Latte x2 | With milk | Total: Rs.500");
+}
+
+TEST(Q2_CoffeeOrder, CustomOrderNoMilk) {
+    CoffeeOrder c("Americano", 1, false, 200);
+    EXPECT_EQ(c.getReceipt(), "Americano x1 | No milk | Total: Rs.200");
+}
+
+
+// ============================================================
+// Q3 – TemperatureConverter
+// ============================================================
+
+TEST(Q3_TempConverter, FreezingPoint) {
+    TemperatureConverter t(0.0);
+    EXPECT_DOUBLE_EQ(t.toFahrenheit(), 32.0);
+    EXPECT_DOUBLE_EQ(t.toKelvin(), 273.15);
+}
+
+TEST(Q3_TempConverter, BoilingPoint) {
+    TemperatureConverter t(100.0);
+    EXPECT_DOUBLE_EQ(t.toFahrenheit(), 212.0);
+    EXPECT_DOUBLE_EQ(t.toKelvin(), 373.15);
+}
+
+TEST(Q3_TempConverter, ScaleLabelCorrect) {
+    TemperatureConverter cold(-10.0);
+    TemperatureConverter warm(25.0);
+    TemperatureConverter hot(50.0);
+    EXPECT_EQ(cold.scaleLabel(), "Cold");
+    EXPECT_EQ(warm.scaleLabel(), "Warm");
+    EXPECT_EQ(hot.scaleLabel(),  "Hot");
+}
+
+
+// ============================================================
+// Q4 – Product  
+// ============================================================
+
+TEST(Q4_Product, DefaultConstructorTotalValueIsZero) {
+    Product p;
+    EXPECT_DOUBLE_EQ(p.totalValue(), 0.0);
+    EXPECT_EQ(p.getStatus(), "Out of Stock");
+}
+
+TEST(Q4_Product, RestockAndSellUpdateQuantity) {
+    Product p("Pen", 10, 15.0);
+    p.restock(5);
+    p.sell(3);
+    EXPECT_EQ(p.getQuantity(), 12);
+    EXPECT_DOUBLE_EQ(p.totalValue(), 180.0);
+}
+
+TEST(Q4_Product, SellIgnoredIfInsufficientAndStatusUpdates) {
+    Product p("Eraser", 2, 10.0);
+    p.sell(10);   // not enough — ignore
+    EXPECT_EQ(p.getQuantity(), 2);
+    EXPECT_EQ(p.getStatus(), "Low Stock");
+}
+
+
+// ============================================================
+// Q5 – Circle
+// ============================================================
+
+TEST(Q5_Circle, DefaultAreaAndCircumference) {
+    Circle c;
+    EXPECT_NEAR(c.area(), 3.14159, 0.001);
+    EXPECT_NEAR(c.circumference(), 2 * 3.14159, 0.001);
+}
+
+TEST(Q5_Circle, ScaledCircleValues) {
+    Circle c(5.0);
+    Circle scaled = c.scale(2.0);
+    EXPECT_NEAR(scaled.area(), 3.14159 * 100.0, 0.01);
+}
+
+TEST(Q5_Circle, IsLargerThanAndFitsInside) {
+    Circle big(10.0);
+    Circle small(3.0);
+    EXPECT_TRUE(big.isLargerThan(small));
+    EXPECT_TRUE(small.fitsInside(big));
+    EXPECT_FALSE(big.fitsInside(small));
+}
